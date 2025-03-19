@@ -2,7 +2,6 @@ package image_test
 
 import (
 	"encoding/base64"
-	"hx-admin/common/client"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/9688101/common/client"
 
 	img "github.com/9688101/hx-admin/common/image"
 
