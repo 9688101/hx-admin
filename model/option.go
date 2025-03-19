@@ -1,12 +1,13 @@
 package model
 
 import (
-	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/logger"
 	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
 	// billingratio "github.com/songquanpeng/one-api/relay/billing/ratio"
 )
 
@@ -142,18 +143,18 @@ func updateOptionMap(key string, value string) (err error) {
 			config.RegisterEnabled = boolValue
 		case "EmailDomainRestrictionEnabled":
 			config.EmailDomainRestrictionEnabled = boolValue
-			case "AutomaticDisableChannelEnabled":
-				config.AutomaticDisableChannelEnabled = boolValue
-			case "AutomaticEnableChannelEnabled":
-				config.AutomaticEnableChannelEnabled = boolValue
-			case "ApproximateTokenEnabled":
-				config.ApproximateTokenEnabled = boolValue
-			case "LogConsumeEnabled":
-				config.LogConsumeEnabled = boolValue
-			case "DisplayInCurrencyEnabled":
-				config.DisplayInCurrencyEnabled = boolValue
-			case "DisplayTokenStatEnabled":
-				config.DisplayTokenStatEnabled = boolValue
+		case "AutomaticDisableChannelEnabled":
+			config.AutomaticDisableChannelEnabled = boolValue
+		case "AutomaticEnableChannelEnabled":
+			config.AutomaticEnableChannelEnabled = boolValue
+		case "ApproximateTokenEnabled":
+			config.ApproximateTokenEnabled = boolValue
+		case "LogConsumeEnabled":
+			config.LogConsumeEnabled = boolValue
+		case "DisplayInCurrencyEnabled":
+			config.DisplayInCurrencyEnabled = boolValue
+		case "DisplayTokenStatEnabled":
+			config.DisplayTokenStatEnabled = boolValue
 		}
 	}
 	switch key {
@@ -254,6 +255,7 @@ var CompletionRatio = map[string]float64{
 	"deepseek-chat":     0.28 / 0.14,
 	"deepseek-reasoner": 2.19 / 0.55,
 }
+
 func CompletionRatio2JSONString() string {
 	jsonBytes, err := json.Marshal(CompletionRatio)
 	if err != nil {
@@ -266,5 +268,3 @@ func UpdateCompletionRatioByJSONString(jsonStr string) error {
 	CompletionRatio = make(map[string]float64)
 	return json.Unmarshal([]byte(jsonStr), &CompletionRatio)
 }
-
-

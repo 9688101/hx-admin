@@ -12,11 +12,11 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
-	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/logger"
-	"github.com/songquanpeng/one-api/common/random"
-	"github.com/songquanpeng/one-api/controller"
-	"github.com/songquanpeng/one-api/model"
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/common/random"
+	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/model"
 )
 
 type GitHubOAuthResponse struct {

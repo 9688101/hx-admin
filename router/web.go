@@ -3,14 +3,17 @@ package router
 import (
 	"embed"
 	"fmt"
+
+	"github.com/9688101/hx-admin/common"
+	"github.com/9688101/hx-admin/common/config"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/songquanpeng/one-api/common"
-	"github.com/songquanpeng/one-api/common/config"
+
 	// "github.com/songquanpeng/one-api/controller"
-	"github.com/songquanpeng/one-api/middleware"
 	"net/http"
+
+	"github.com/9688101/hx-admin/middleware"
 	// "strings"
 )
 

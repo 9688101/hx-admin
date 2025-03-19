@@ -14,8 +14,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"hx-admin/common/config"
-	"hx-admin/common/helper"
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/helper"
 )
 
 type loggerLevel string

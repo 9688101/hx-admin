@@ -3,11 +3,12 @@ package common
 import (
 	"flag"
 	"fmt"
-	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/logger"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
 )
 
 var (

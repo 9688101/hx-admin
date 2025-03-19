@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/logger"
 )
 
 func SetRouter(router *gin.Engine, buildFS embed.FS) {

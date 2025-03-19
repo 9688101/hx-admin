@@ -3,7 +3,7 @@ package image
 import (
 	"bytes"
 	"encoding/base64"
-	"hx-admin/common/client"
+	"github.com/9688101/hx-admin/common/client"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"

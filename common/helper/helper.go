@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"hx-admin/common/random"
+	"github.com/9688101/hx-admin/common/random"
 )
 
 func OpenBrowser(url string) {

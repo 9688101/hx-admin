@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/songquanpeng/one-api/common/env"
+	"github.com/9688101/hx-admin/common/env"
 )
 
 var UsingSQLite = false

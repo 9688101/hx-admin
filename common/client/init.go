@@ -2,11 +2,12 @@ package client
 
 import (
 	"fmt"
-	"hx-admin/common/config"
-	"hx-admin/common/logger"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
 )
 
 var HTTPClient *http.Client

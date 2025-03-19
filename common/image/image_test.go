@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	img "hx-admin/common/image"
+	img "github.com/9688101/hx-admin/common/image"
 
 	"github.com/stretchr/testify/assert"
 	_ "golang.org/x/image/webp"

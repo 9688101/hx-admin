@@ -6,9 +6,9 @@ import (
 	// "sync"
 	"time"
 
-	"github.com/songquanpeng/one-api/common"
-	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/logger"
+	"github.com/9688101/hx-admin/common"
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/logger"
 )
 
 var (

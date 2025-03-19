@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"github.com/9688101/hx-admin/common/helper"
+	"github.com/9688101/hx-admin/common/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/songquanpeng/one-api/common/helper"
-	"github.com/songquanpeng/one-api/common/logger"
 )
 
 func abortWithMessage(c *gin.Context, statusCode int, message string) {

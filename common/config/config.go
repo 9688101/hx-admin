@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"hx-admin/common/env"
+	"github.com/9688101/hx-admin/common/env"
 
 	"github.com/google/uuid"
 )

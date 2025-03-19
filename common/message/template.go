@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/songquanpeng/one-api/common/config"
+	"github.com/9688101/hx-admin/common/config"
 )
 
 // EmailTemplate 生成美观的 HTML 邮件内容

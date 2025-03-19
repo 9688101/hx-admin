@@ -11,16 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 
-	"hx-admin/common"
-	"hx-admin/common/client"
-	"hx-admin/common/config"
-	"hx-admin/common/i18n"
-	"hx-admin/common/logger"
-	"hx-admin/middleware"
-	"hx-admin/model"
+	"github.com/9688101/hx-admin/common"
+	"github.com/9688101/hx-admin/common/client"
+	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/common/i18n"
+	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/middleware"
+	"github.com/9688101/hx-admin/model"
 
 	// "github.com/songquanpeng/one-api/relay/adaptor/openai"
-	"hx-admin/router"
+	"github.com/9688101/hx-admin/router"
 )
 
 //go:embed web/build/*
