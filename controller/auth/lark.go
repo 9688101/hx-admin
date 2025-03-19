@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/config"
+	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/controller"
 	"github.com/9688101/hx-admin/model"
 )
