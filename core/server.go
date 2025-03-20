@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/9688101/hx-admin/config"
 	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
@@ -56,7 +55,7 @@ func RunServer() {
 	}()
 
 	// 初始化Redis客户端
-	err = config.InitRedisClient()
+	err = initialize.InitRedisClient()
 	if err != nil {
 		logger.FatalLog("failed to initialize Redis: " + err.Error())
 	}
@@ -66,7 +65,7 @@ func RunServer() {
 	logger.SysLog(fmt.Sprintf("using theme %s", global.Theme)) // 记录主题信息
 
 	// 配置缓存设置
-	if config.RedisEnabled {
+	if initialize.RedisEnabled {
 		global.MemoryCacheEnabled = true // Redis启用时强制开启内存缓存
 	}
 	if global.MemoryCacheEnabled {
