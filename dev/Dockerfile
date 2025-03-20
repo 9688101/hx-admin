@@ -45,3 +45,6 @@ COPY --from=builder2 /build/one-api /
 EXPOSE 3000
 WORKDIR /data
 ENTRYPOINT ["/one-api"]
+
+
+
