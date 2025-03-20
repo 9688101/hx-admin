@@ -13,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
 )
 
@@ -32,11 +32,11 @@ func getLarkUserInfoByCode(code string) (*LarkUser, error) {
 		return nil, errors.New("无效的参数")
 	}
 	values := map[string]string{
-		"client_id":     config.LarkClientId,
-		"client_secret": config.LarkClientSecret,
+		"client_id":     global.LarkClientId,
+		"client_secret": global.LarkClientSecret,
 		"code":          code,
 		"grant_type":    "authorization_code",
-		"redirect_uri":  fmt.Sprintf("%s/oauth/lark", config.ServerAddress),
+		"redirect_uri":  fmt.Sprintf("%s/oauth/lark", global.ServerAddress),
 	}
 	jsonData, err := json.Marshal(values)
 	if err != nil {
@@ -118,7 +118,7 @@ func LarkOAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if config.RegisterEnabled {
+		if global.RegisterEnabled {
 			user.Username = "lark_" + strconv.Itoa(model.GetMaxUserId()+1)
 			if larkUser.Name != "" {
 				user.DisplayName = larkUser.Name

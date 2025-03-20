@@ -12,9 +12,9 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/logger"
 	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
 )
 
@@ -40,17 +40,17 @@ func getOidcUserInfoByCode(code string) (*OidcUser, error) {
 		return nil, errors.New("无效的参数")
 	}
 	values := map[string]string{
-		"client_id":     config.OidcClientId,
-		"client_secret": config.OidcClientSecret,
+		"client_id":     global.OidcClientId,
+		"client_secret": global.OidcClientSecret,
 		"code":          code,
 		"grant_type":    "authorization_code",
-		"redirect_uri":  fmt.Sprintf("%s/oauth/oidc", config.ServerAddress),
+		"redirect_uri":  fmt.Sprintf("%s/oauth/oidc", global.ServerAddress),
 	}
 	jsonData, err := json.Marshal(values)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", config.OidcTokenEndpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", global.OidcTokenEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func getOidcUserInfoByCode(code string) (*OidcUser, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err = http.NewRequest("GET", config.OidcUserinfoEndpoint, nil)
+	req, err = http.NewRequest("GET", global.OidcUserinfoEndpoint, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func OidcAuth(c *gin.Context) {
 		OidcBind(c)
 		return
 	}
-	if !config.OidcEnabled {
+	if !global.OidcEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 OIDC 登录以及注册",
@@ -133,7 +133,7 @@ func OidcAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if config.RegisterEnabled {
+		if global.RegisterEnabled {
 			user.Email = oidcUser.Email
 			if oidcUser.PreferredUsername != "" {
 				user.Username = oidcUser.PreferredUsername
@@ -173,7 +173,7 @@ func OidcAuth(c *gin.Context) {
 }
 
 func OidcBind(c *gin.Context) {
-	if !config.OidcEnabled {
+	if !global.OidcEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 OIDC 登录以及注册",

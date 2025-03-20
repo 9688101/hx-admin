@@ -12,10 +12,10 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/common/random"
+	"github.com/9688101/hx-admin/utils"
 	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
 )
 
@@ -35,7 +35,7 @@ func getGitHubUserInfoByCode(code string) (*GitHubUser, error) {
 	if code == "" {
 		return nil, errors.New("无效的参数")
 	}
-	values := map[string]string{"client_id": config.GitHubClientId, "client_secret": config.GitHubClientSecret, "code": code}
+	values := map[string]string{"client_id": global.GitHubClientId, "client_secret": global.GitHubClientSecret, "code": code}
 	jsonData, err := json.Marshal(values)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func GitHubOAuth(c *gin.Context) {
 		return
 	}
 
-	if !config.GitHubOAuthEnabled {
+	if !global.GitHubOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 GitHub 登录以及注册",
@@ -128,7 +128,7 @@ func GitHubOAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if config.RegisterEnabled {
+		if global.RegisterEnabled {
 			user.Username = "github_" + strconv.Itoa(model.GetMaxUserId()+1)
 			if githubUser.Name != "" {
 				user.DisplayName = githubUser.Name
@@ -166,7 +166,7 @@ func GitHubOAuth(c *gin.Context) {
 }
 
 func GitHubBind(c *gin.Context) {
-	if !config.GitHubOAuthEnabled {
+	if !global.GitHubOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 GitHub 登录以及注册",
@@ -222,7 +222,7 @@ func GitHubBind(c *gin.Context) {
 
 func GenerateOAuthCode(c *gin.Context) {
 	session := sessions.Default(c)
-	state := random.GetRandomString(12)
+	state := utils.GetRandomString(12)
 	session.Set("oauth_state", state)
 	err := session.Save()
 	if err != nil {

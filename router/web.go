@@ -5,7 +5,7 @@ import (
 	"fmt"   // 格式化字符串
 
 	"github.com/9688101/hx-admin/common"        // 引入通用工具
-	"github.com/9688101/hx-admin/common/config" // 引入配置模块
+	"github.com/9688101/hx-admin/global" // 引入配置模块
 	"github.com/gin-contrib/gzip"              // Gin 的 gzip 中间件，用于压缩 HTTP 响应
 	"github.com/gin-contrib/static"            // Gin 的静态文件服务中间件
 	"github.com/gin-gonic/gin"                 // Gin 框架，用于处理 HTTP 请求
@@ -19,7 +19,7 @@ import (
 // SetWebRouter 配置 Web 前端的路由
 func SetWebRouter(router *gin.Engine, buildFS embed.FS) {
 	// 读取前端 `index.html` 文件内容，作为前端入口文件
-	indexPageData, _ := buildFS.ReadFile(fmt.Sprintf("web/build/%s/index.html", config.Theme))
+	indexPageData, _ := buildFS.ReadFile(fmt.Sprintf("web/build/%s/index.html", global.Theme))
 
 	// 启用 gzip 压缩，提高数据传输效率
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -31,7 +31,7 @@ func SetWebRouter(router *gin.Engine, buildFS embed.FS) {
 	router.Use(middleware.Cache())
 
 	// 配置静态文件服务，将前端 `web/build/{主题名}` 目录中的文件嵌入到 Gin 路由中
-	router.Use(static.Serve("/", common.EmbedFolder(buildFS, fmt.Sprintf("web/build/%s", config.Theme))))
+	router.Use(static.Serve("/", common.EmbedFolder(buildFS, fmt.Sprintf("web/build/%s", global.Theme))))
 
 	// 配置默认的 404 处理（未匹配到的路由）
 	router.NoRoute(func(c *gin.Context) {

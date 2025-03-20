@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/global"
 )
 
 type request struct {
@@ -24,20 +24,20 @@ type response struct {
 }
 
 func SendMessage(title string, description string, content string) error {
-	if config.MessagePusherAddress == "" {
+	if global.MessagePusherAddress == "" {
 		return errors.New("message pusher address is not set")
 	}
 	req := request{
 		Title:       title,
 		Description: description,
 		Content:     content,
-		Token:       config.MessagePusherToken,
+		Token:       global.MessagePusherToken,
 	}
 	data, err := json.Marshal(req)
 	if err != nil {
 		return err
 	}
-	resp, err := http.Post(config.MessagePusherAddress,
+	resp, err := http.Post(global.MessagePusherAddress,
 		"application/json", bytes.NewBuffer(data))
 	if err != nil {
 		return err

@@ -10,9 +10,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/ctxkey"
 	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
 )
 
@@ -26,11 +26,11 @@ func getWeChatIdByCode(code string) (string, error) {
 	if code == "" {
 		return "", errors.New("无效的参数")
 	}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/wechat/user?code=%s", config.WeChatServerAddress, code), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/wechat/user?code=%s", global.WeChatServerAddress, code), nil)
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("Authorization", config.WeChatServerToken)
+	req.Header.Set("Authorization", global.WeChatServerToken)
 	client := http.Client{
 		Timeout: 5 * time.Second,
 	}
@@ -55,7 +55,7 @@ func getWeChatIdByCode(code string) (string, error) {
 
 func WeChatAuth(c *gin.Context) {
 	ctx := c.Request.Context()
-	if !config.WeChatAuthEnabled {
+	if !global.WeChatAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "管理员未开启通过微信登录以及注册",
 			"success": false,
@@ -84,7 +84,7 @@ func WeChatAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if config.RegisterEnabled {
+		if global.RegisterEnabled {
 			user.Username = "wechat_" + strconv.Itoa(model.GetMaxUserId()+1)
 			user.DisplayName = "WeChat User"
 			user.Role = model.RoleCommonUser
@@ -117,7 +117,7 @@ func WeChatAuth(c *gin.Context) {
 }
 
 func WeChatBind(c *gin.Context) {
-	if !config.WeChatAuthEnabled {
+	if !global.WeChatAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "管理员未开启通过微信登录以及注册",
 			"success": false,

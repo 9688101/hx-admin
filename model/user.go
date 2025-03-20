@@ -7,11 +7,10 @@ import (
 	"strings"
 
 	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/blacklist"
+	"github.com/9688101/hx-admin/utils"
 
 	// "github.com/songquanpeng/one-api/common/helper"
 	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/common/random"
 )
 
 const (
@@ -118,14 +117,14 @@ func DeleteUserById(id int) (err error) {
 func (user *User) Insert(ctx context.Context, inviterId int) error {
 	var err error
 	if user.Password != "" {
-		user.Password, err = common.Password2Hash(user.Password)
+		user.Password, err = utils.Password2Hash(user.Password)
 		if err != nil {
 			return err
 		}
 	}
 	// user.Quota = config.QuotaForNewUser
-	user.AccessToken = random.GetUUID()
-	user.AffCode = random.GetRandomString(4)
+	user.AccessToken = utils.GetUUID()
+	user.AffCode = utils.GetRandomString(4)
 	result := DB.Create(user)
 	if result.Error != nil {
 		return result.Error
@@ -166,15 +165,15 @@ func (user *User) Insert(ctx context.Context, inviterId int) error {
 func (user *User) Update(updatePassword bool) error {
 	var err error
 	if updatePassword {
-		user.Password, err = common.Password2Hash(user.Password)
+		user.Password, err = utils.Password2Hash(user.Password)
 		if err != nil {
 			return err
 		}
 	}
 	if user.Status == UserStatusDisabled {
-		blacklist.BanUser(user.Id)
+		utils.BanUser(user.Id)
 	} else if user.Status == UserStatusEnabled {
-		blacklist.UnbanUser(user.Id)
+		utils.UnbanUser(user.Id)
 	}
 	err = DB.Model(user).Updates(user).Error
 	return err
@@ -184,8 +183,8 @@ func (user *User) Delete() error {
 	if user.Id == 0 {
 		return errors.New("id 为空！")
 	}
-	blacklist.BanUser(user.Id)
-	user.Username = fmt.Sprintf("deleted_%s", random.GetUUID())
+	utils.BanUser(user.Id)
+	user.Username = fmt.Sprintf("deleted_%s", utils.GetUUID())
 	user.Status = UserStatusDeleted
 	err := DB.Model(user).Updates(user).Error
 	return err
@@ -209,7 +208,7 @@ func (user *User) ValidateAndFill() (err error) {
 			return errors.New("用户名或密码错误，或用户已被封禁")
 		}
 	}
-	okay := common.ValidatePasswordAndHash(password, user.Password)
+	okay := utils.ValidatePasswordAndHash(password, user.Password)
 	if !okay || user.Status != UserStatusEnabled {
 		return errors.New("用户名或密码错误，或用户已被封禁")
 	}
@@ -300,7 +299,7 @@ func ResetUserPasswordByEmail(email string, password string) error {
 	if email == "" || password == "" {
 		return errors.New("邮箱地址或密码为空！")
 	}
-	hashedPassword, err := common.Password2Hash(password)
+	hashedPassword, err := utils.Password2Hash(password)
 	if err != nil {
 		return err
 	}

@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/9688101/hx-admin/common/config"
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
+	"github.com/9688101/hx-admin/global"
 )
 
 var (
@@ -42,7 +42,7 @@ func Init() {
 		if os.Getenv("SESSION_SECRET") == "random_string" {
 			logger.SysError("SESSION_SECRET is set to an example value, please change it to a random string.")
 		} else {
-			config.SessionSecret = os.Getenv("SESSION_SECRET")
+			global.SessionSecret = os.Getenv("SESSION_SECRET")
 		}
 	}
 	if os.Getenv("SQLITE_PATH") != "" {

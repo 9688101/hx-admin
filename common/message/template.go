@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/global"
 )
 
 // EmailTemplate 生成美观的 HTML 邮件内容
@@ -30,5 +30,5 @@ func EmailTemplate(title, content string) string {
     </div>
 </body>
 </html>
-`, title, content, config.SystemName)
+`, title, content, global.SystemName)
 }

@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/env"
 	"github.com/9688101/hx-admin/common/helper"
 	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/common/random"
+	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -27,13 +27,13 @@ func CreateRootAccountIfNeed() error {
 	//if user.Status != util.UserStatusEnabled {
 	if err := DB.First(&user).Error; err != nil {
 		logger.SysLog("no user exists, creating a root user for you: username is root, password is 123456")
-		hashedPassword, err := common.Password2Hash("123456")
+		hashedPassword, err := utils.Password2Hash("123456")
 		if err != nil {
 			return err
 		}
-		accessToken := random.GetUUID()
-		if config.InitialRootAccessToken != "" {
-			accessToken = config.InitialRootAccessToken
+		accessToken := utils.GetUUID()
+		if global.InitialRootAccessToken != "" {
+			accessToken = global.InitialRootAccessToken
 		}
 		rootUser := User{
 			Username:    "root",
@@ -45,12 +45,12 @@ func CreateRootAccountIfNeed() error {
 			// Quota:       500000000000000,
 		}
 		DB.Create(&rootUser)
-		if config.InitialRootToken != "" {
+		if global.InitialRootToken != "" {
 			logger.SysLog("creating initial root token as requested")
 			token := Token{
 				Id:     1,
 				UserId: rootUser.Id,
-				Key:    config.InitialRootToken,
+				Key:    global.InitialRootToken,
 				// Status:       TokenStatusEnabled,
 				Name:         "Initial Root Token",
 				CreatedTime:  helper.GetTimestamp(),
@@ -119,7 +119,7 @@ func InitDB() {
 
 	sqlDB := setDBConns(DB)
 
-	if !config.IsMasterNode {
+	if !global.IsMasterNode {
 		return
 	}
 
@@ -180,7 +180,7 @@ func InitLogDB() {
 
 	setDBConns(LOG_DB)
 
-	if !config.IsMasterNode {
+	if !global.IsMasterNode {
 		return
 	}
 
@@ -202,7 +202,7 @@ func InitLogDB() {
 // }
 
 func setDBConns(db *gorm.DB) *sql.DB {
-	if config.DebugSQLEnabled {
+	if global.DebugSQLEnabled {
 		db = db.Debug()
 	}
 

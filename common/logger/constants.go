@@ -1,3 +1,3 @@
-package logger
+// package logger
 
-var LogDir string
+// var LogDir string

@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/9688101/hx-admin/common/blacklist"
-	"github.com/9688101/hx-admin/model"
 )
 
 func authHelper(c *gin.Context, minRole int) {
@@ -43,7 +43,7 @@ func authHelper(c *gin.Context, minRole int) {
 			return
 		}
 	}
-	if status.(int) == model.UserStatusDisabled || blacklist.IsUserBanned(id.(int)) {
+	if status.(int) == model.UserStatusDisabled || utils.IsUserBanned(id.(int)) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "用户已被封禁",

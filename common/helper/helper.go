@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/random"
+	"github.com/9688101/hx-admin/common/utils"
 )
 
 func OpenBrowser(url string) {
@@ -106,7 +106,7 @@ func IntMax(a int, b int) int {
 }
 
 func GenRequestID() string {
-	return GetTimeString() + random.GetRandomNumberString(8)
+	return GetTimeString() + utils.GetRandomNumberString(8)
 }
 
 func SetRequestID(ctx context.Context, id string) context.Context {

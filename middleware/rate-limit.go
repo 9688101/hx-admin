@@ -10,6 +10,7 @@ import (
 
 	"github.com/9688101/hx-admin/common"
 	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/global"
 )
 
 var timeFormat = "2006-01-02T15:04:05.000Z"
@@ -29,7 +30,7 @@ func redisRateLimiter(c *gin.Context, maxRequestNum int, duration int64, mark st
 	}
 	if listLength < int64(maxRequestNum) {
 		rdb.LPush(ctx, key, time.Now().Format(timeFormat))
-		rdb.Expire(ctx, key, config.RateLimitKeyExpirationDuration)
+		rdb.Expire(ctx, key, global.RateLimitKeyExpirationDuration)
 	} else {
 		oldTimeStr, _ := rdb.LIndex(ctx, key, -1).Result()
 		oldTime, err := time.Parse(timeFormat, oldTimeStr)
@@ -50,14 +51,14 @@ func redisRateLimiter(c *gin.Context, maxRequestNum int, duration int64, mark st
 		// time.Since will return negative number!
 		// See: https://stackoverflow.com/questions/50970900/why-is-time-since-returning-negative-durations-on-windows
 		if int64(nowTime.Sub(oldTime).Seconds()) < duration {
-			rdb.Expire(ctx, key, config.RateLimitKeyExpirationDuration)
+			rdb.Expire(ctx, key, global.RateLimitKeyExpirationDuration)
 			c.Status(http.StatusTooManyRequests)
 			c.Abort()
 			return
 		} else {
 			rdb.LPush(ctx, key, time.Now().Format(timeFormat))
 			rdb.LTrim(ctx, key, 0, int64(maxRequestNum-1))
-			rdb.Expire(ctx, key, config.RateLimitKeyExpirationDuration)
+			rdb.Expire(ctx, key, global.RateLimitKeyExpirationDuration)
 		}
 	}
 }
@@ -72,18 +73,18 @@ func memoryRateLimiter(c *gin.Context, maxRequestNum int, duration int64, mark s
 }
 
 func rateLimitFactory(maxRequestNum int, duration int64, mark string) func(c *gin.Context) {
-	if maxRequestNum == 0 || config.DebugEnabled {
+	if maxRequestNum == 0 || global.DebugEnabled {
 		return func(c *gin.Context) {
 			c.Next()
 		}
 	}
-	if common.RedisEnabled {
+	if config.RedisEnabled {
 		return func(c *gin.Context) {
 			redisRateLimiter(c, maxRequestNum, duration, mark)
 		}
 	} else {
 		// It's safe to call multi times.
-		inMemoryRateLimiter.Init(config.RateLimitKeyExpirationDuration)
+		inMemoryRateLimiter.Init(global.RateLimitKeyExpirationDuration)
 		return func(c *gin.Context) {
 			memoryRateLimiter(c, maxRequestNum, duration, mark)
 		}
@@ -91,21 +92,21 @@ func rateLimitFactory(maxRequestNum int, duration int64, mark string) func(c *gi
 }
 
 func GlobalWebRateLimit() func(c *gin.Context) {
-	return rateLimitFactory(config.GlobalWebRateLimitNum, config.GlobalWebRateLimitDuration, "GW")
+	return rateLimitFactory(global.GlobalWebRateLimitNum, global.GlobalWebRateLimitDuration, "GW")
 }
 
 func GlobalAPIRateLimit() func(c *gin.Context) {
-	return rateLimitFactory(config.GlobalApiRateLimitNum, config.GlobalApiRateLimitDuration, "GA")
+	return rateLimitFactory(global.GlobalApiRateLimitNum, global.GlobalApiRateLimitDuration, "GA")
 }
 
 func CriticalRateLimit() func(c *gin.Context) {
-	return rateLimitFactory(config.CriticalRateLimitNum, config.CriticalRateLimitDuration, "CT")
+	return rateLimitFactory(global.CriticalRateLimitNum, global.CriticalRateLimitDuration, "CT")
 }
 
 func DownloadRateLimit() func(c *gin.Context) {
-	return rateLimitFactory(config.DownloadRateLimitNum, config.DownloadRateLimitDuration, "DW")
+	return rateLimitFactory(global.DownloadRateLimitNum, global.DownloadRateLimitDuration, "DW")
 }
 
 func UploadRateLimit() func(c *gin.Context) {
-	return rateLimitFactory(config.UploadRateLimitNum, config.UploadRateLimitDuration, "UP")
+	return rateLimitFactory(global.UploadRateLimitNum, global.UploadRateLimitDuration, "UP")
 }

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/global"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,7 @@ type turnstileCheckResponse struct {
 
 func TurnstileCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if config.TurnstileCheckEnabled {
+		if global.TurnstileCheckEnabled {
 			session := sessions.Default(c)
 			turnstileChecked := session.Get("turnstile")
 			if turnstileChecked != nil {
@@ -34,7 +34,7 @@ func TurnstileCheck() gin.HandlerFunc {
 				return
 			}
 			rawRes, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", url.Values{
-				"secret":   {config.TurnstileSecretKey},
+				"secret":   {global.TurnstileSecretKey},
 				"response": {response},
 				"remoteip": {c.ClientIP()},
 			})

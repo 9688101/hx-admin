@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/i18n"
 	"github.com/9688101/hx-admin/common/message"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
 
 	"github.com/gin-gonic/gin"
@@ -22,62 +22,62 @@ func GetStatus(c *gin.Context) {
 		"data": gin.H{
 			"version":            common.Version,
 			"start_time":         common.StartTime,
-			"email_verification": config.EmailVerificationEnabled,
-			"github_oauth":       config.GitHubOAuthEnabled,
-			"github_client_id":   config.GitHubClientId,
-			"lark_client_id":     config.LarkClientId,
-			"system_name":        config.SystemName,
-			"logo":               config.Logo,
-			"footer_html":        config.Footer,
-			"wechat_qrcode":      config.WeChatAccountQRCodeImageURL,
-			"wechat_login":       config.WeChatAuthEnabled,
-			"server_address":     config.ServerAddress,
-			"turnstile_check":    config.TurnstileCheckEnabled,
-			"turnstile_site_key": config.TurnstileSiteKey,
-			// "top_up_link":                 config.TopUpLink,
-			"chat_link": config.ChatLink,
-			// "quota_per_unit":              config.QuotaPerUnit,
-			"display_in_currency":         config.DisplayInCurrencyEnabled,
-			"oidc":                        config.OidcEnabled,
-			"oidc_client_id":              config.OidcClientId,
-			"oidc_well_known":             config.OidcWellKnown,
-			"oidc_authorization_endpoint": config.OidcAuthorizationEndpoint,
-			"oidc_token_endpoint":         config.OidcTokenEndpoint,
-			"oidc_userinfo_endpoint":      config.OidcUserinfoEndpoint,
+			"email_verification": global.EmailVerificationEnabled,
+			"github_oauth":       global.GitHubOAuthEnabled,
+			"github_client_id":   global.GitHubClientId,
+			"lark_client_id":     global.LarkClientId,
+			"system_name":        global.SystemName,
+			"logo":               global.Logo,
+			"footer_html":        global.Footer,
+			"wechat_qrcode":      global.WeChatAccountQRCodeImageURL,
+			"wechat_login":       global.WeChatAuthEnabled,
+			"server_address":     global.ServerAddress,
+			"turnstile_check":    global.TurnstileCheckEnabled,
+			"turnstile_site_key": global.TurnstileSiteKey,
+			// "top_up_link":                 global.TopUpLink,
+			"chat_link": global.ChatLink,
+			// "quota_per_unit":              global.QuotaPerUnit,
+			"display_in_currency":         global.DisplayInCurrencyEnabled,
+			"oidc":                        global.OidcEnabled,
+			"oidc_client_id":              global.OidcClientId,
+			"oidc_well_known":             global.OidcWellKnown,
+			"oidc_authorization_endpoint": global.OidcAuthorizationEndpoint,
+			"oidc_token_endpoint":         global.OidcTokenEndpoint,
+			"oidc_userinfo_endpoint":      global.OidcUserinfoEndpoint,
 		},
 	})
 	return
 }
 
 func GetNotice(c *gin.Context) {
-	config.OptionMapRWMutex.RLock()
-	defer config.OptionMapRWMutex.RUnlock()
+	global.OptionMapRWMutex.RLock()
+	defer global.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    config.OptionMap["Notice"],
+		"data":    global.OptionMap["Notice"],
 	})
 	return
 }
 
 func GetAbout(c *gin.Context) {
-	config.OptionMapRWMutex.RLock()
-	defer config.OptionMapRWMutex.RUnlock()
+	global.OptionMapRWMutex.RLock()
+	defer global.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    config.OptionMap["About"],
+		"data":    global.OptionMap["About"],
 	})
 	return
 }
 
 func GetHomePageContent(c *gin.Context) {
-	config.OptionMapRWMutex.RLock()
-	defer config.OptionMapRWMutex.RUnlock()
+	global.OptionMapRWMutex.RLock()
+	defer global.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    config.OptionMap["HomePageContent"],
+		"data":    global.OptionMap["HomePageContent"],
 	})
 	return
 }
@@ -91,9 +91,9 @@ func SendEmailVerification(c *gin.Context) {
 		})
 		return
 	}
-	if config.EmailDomainRestrictionEnabled {
+	if global.EmailDomainRestrictionEnabled {
 		allowed := false
-		for _, domain := range config.EmailDomainWhitelist {
+		for _, domain := range global.EmailDomainWhitelist {
 			if strings.HasSuffix(email, "@"+domain) {
 				allowed = true
 				break
@@ -116,7 +116,7 @@ func SendEmailVerification(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(6)
 	common.RegisterVerificationCodeWithKey(email, code, common.EmailVerificationPurpose)
-	subject := fmt.Sprintf("%s 邮箱验证邮件", config.SystemName)
+	subject := fmt.Sprintf("%s 邮箱验证邮件", global.SystemName)
 	content := message.EmailTemplate(
 		subject,
 		fmt.Sprintf(`
@@ -125,7 +125,7 @@ func SendEmailVerification(c *gin.Context) {
 			<p>您的验证码为：</p>
 			<p style="font-size: 24px; font-weight: bold; color: #333; background-color: #f8f8f8; padding: 10px; text-align: center; border-radius: 4px;">%s</p>
 			<p style="color: #666;">验证码 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, config.SystemName, code, common.VerificationValidMinutes),
+		`, global.SystemName, code, common.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {
@@ -160,8 +160,8 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(0)
 	common.RegisterVerificationCodeWithKey(email, code, common.PasswordResetPurpose)
-	link := fmt.Sprintf("%s/user/reset?email=%s&token=%s", config.ServerAddress, email, code)
-	subject := fmt.Sprintf("%s 密码重置", config.SystemName)
+	link := fmt.Sprintf("%s/user/reset?email=%s&token=%s", global.ServerAddress, email, code)
+	subject := fmt.Sprintf("%s 密码重置", global.SystemName)
 	content := message.EmailTemplate(
 		subject,
 		fmt.Sprintf(`
@@ -174,7 +174,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 			<p style="color: #666;">如果按钮无法点击，请复制以下链接到浏览器中打开：</p>
 			<p style="background-color: #f8f8f8; padding: 10px; border-radius: 4px; word-break: break-all;">%s</p>
 			<p style="color: #666;">重置链接 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, config.SystemName, link, link, common.VerificationValidMinutes),
+		`, global.SystemName, link, link, common.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {

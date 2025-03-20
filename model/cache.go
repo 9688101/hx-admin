@@ -6,17 +6,17 @@ import (
 	// "sync"
 	"time"
 
-	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/config"
+	"github.com/9688101/hx-admin/global"
 )
 
 var (
-	TokenCacheSeconds         = config.SyncFrequency
-	UserId2GroupCacheSeconds  = config.SyncFrequency
-	UserId2QuotaCacheSeconds  = config.SyncFrequency
-	UserId2StatusCacheSeconds = config.SyncFrequency
-	GroupModelsCacheSeconds   = config.SyncFrequency
+	TokenCacheSeconds         = global.SyncFrequency
+	UserId2GroupCacheSeconds  = global.SyncFrequency
+	UserId2QuotaCacheSeconds  = global.SyncFrequency
+	UserId2StatusCacheSeconds = global.SyncFrequency
+	GroupModelsCacheSeconds   = global.SyncFrequency
 )
 
 // func CacheGetTokenByKey(key string) (*Token, error) {
@@ -50,16 +50,16 @@ var (
 // }
 
 func CacheGetUserGroup(id int) (group string, err error) {
-	if !common.RedisEnabled {
+	if !config.RedisEnabled {
 		return GetUserGroup(id)
 	}
-	group, err = common.RedisGet(fmt.Sprintf("user_group:%d", id))
+	group, err = config.RedisGet(fmt.Sprintf("user_group:%d", id))
 	if err != nil {
 		group, err = GetUserGroup(id)
 		if err != nil {
 			return "", err
 		}
-		err = common.RedisSet(fmt.Sprintf("user_group:%d", id), group, time.Duration(UserId2GroupCacheSeconds)*time.Second)
+		err = config.RedisSet(fmt.Sprintf("user_group:%d", id), group, time.Duration(UserId2GroupCacheSeconds)*time.Second)
 		if err != nil {
 			logger.SysError("Redis set user group error: " + err.Error())
 		}
@@ -119,10 +119,10 @@ func CacheGetUserGroup(id int) (group string, err error) {
 // }
 
 func CacheIsUserEnabled(userId int) (bool, error) {
-	if !common.RedisEnabled {
+	if !config.RedisEnabled {
 		return IsUserEnabled(userId)
 	}
-	enabled, err := common.RedisGet(fmt.Sprintf("user_enabled:%d", userId))
+	enabled, err := config.RedisGet(fmt.Sprintf("user_enabled:%d", userId))
 	if err == nil {
 		return enabled == "1", nil
 	}
@@ -135,7 +135,7 @@ func CacheIsUserEnabled(userId int) (bool, error) {
 	if userEnabled {
 		enabled = "1"
 	}
-	err = common.RedisSet(fmt.Sprintf("user_enabled:%d", userId), enabled, time.Duration(UserId2StatusCacheSeconds)*time.Second)
+	err = config.RedisSet(fmt.Sprintf("user_enabled:%d", userId), enabled, time.Duration(UserId2StatusCacheSeconds)*time.Second)
 	if err != nil {
 		logger.SysError("Redis set user enabled error: " + err.Error())
 	}

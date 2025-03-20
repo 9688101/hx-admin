@@ -1,13 +1,14 @@
 package router
 
 import (
-	"embed"                        // 用于嵌入静态资源文件
-	"fmt"                          // 用于字符串格式化
-	"net/http"                     // 提供 HTTP 相关功能
-	"os"                           // 处理系统环境变量
-	"strings"                      // 处理字符串操作
-	"github.com/9688101/hx-admin/common/config" // 引入配置模块
+	"embed"    // 用于嵌入静态资源文件
+	"fmt"      // 用于字符串格式化
+	"net/http" // 提供 HTTP 相关功能
+	"os"       // 处理系统环境变量
+	"strings"  // 处理字符串操作
+
 	"github.com/9688101/hx-admin/common/logger" // 引入日志模块
+	"github.com/9688101/hx-admin/global"        // 引入配置模块
 	"github.com/gin-gonic/gin"                  // 引入 Gin 框架，用于处理 HTTP 请求
 )
 
@@ -26,7 +27,7 @@ func SetRouter(router *gin.Engine, buildFS embed.FS) {
 	frontendBaseUrl := os.Getenv("FRONTEND_BASE_URL")
 
 	// 如果当前节点是主节点（Master Node），则忽略前端 URL 并记录日志
-	if config.IsMasterNode && frontendBaseUrl != "" {
+	if global.IsMasterNode && frontendBaseUrl != "" {
 		frontendBaseUrl = ""
 		logger.SysLog("FRONTEND_BASE_URL is ignored on master node")
 	}

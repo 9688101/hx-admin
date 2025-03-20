@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/9688101/hx-admin/common/config"
+	"github.com/9688101/hx-admin/global"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 
 func Notify(by string, title string, description string, content string) error {
 	if by == ByEmail {
-		return SendEmail(title, config.RootUserEmail, content)
+		return SendEmail(title, global.RootUserEmail, content)
 	}
 	if by == ByMessagePusher {
 		return SendMessage(title, description, content)

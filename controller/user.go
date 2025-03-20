@@ -12,11 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/common/ctxkey"
 	"github.com/9688101/hx-admin/common/i18n"
-	"github.com/9688101/hx-admin/common/random"
+	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/utils"
 )
 
 type LoginRequest struct {
@@ -25,7 +25,7 @@ type LoginRequest struct {
 }
 
 func Login(c *gin.Context) {
-	if !config.PasswordLoginEnabled {
+	if !global.PasswordLoginEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "管理员关闭了密码登录",
 			"success": false,
@@ -113,14 +113,14 @@ func Logout(c *gin.Context) {
 
 func Register(c *gin.Context) {
 	ctx := c.Request.Context()
-	if !config.RegisterEnabled {
+	if !global.RegisterEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "管理员关闭了新用户注册",
 			"success": false,
 		})
 		return
 	}
-	if !config.PasswordRegisterEnabled {
+	if !global.PasswordRegisterEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "管理员关闭了通过密码进行注册，请使用第三方账户验证的形式进行注册",
 			"success": false,
@@ -143,7 +143,7 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
-	if config.EmailVerificationEnabled {
+	if global.EmailVerificationEnabled {
 		if user.Email == "" || user.VerificationCode == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -167,7 +167,7 @@ func Register(c *gin.Context) {
 		DisplayName: user.Username,
 		InviterId:   inviterId,
 	}
-	if config.EmailVerificationEnabled {
+	if global.EmailVerificationEnabled {
 		cleanUser.Email = user.Email
 	}
 	if err := cleanUser.Insert(ctx, inviterId); err != nil {
@@ -192,7 +192,7 @@ func GetAllUsers(c *gin.Context) {
 	}
 
 	order := c.DefaultQuery("order", "")
-	users, err := model.GetAllUsers(p*config.ItemsPerPage, config.ItemsPerPage, order)
+	users, err := model.GetAllUsers(p*global.ItemsPerPage, global.ItemsPerPage, order)
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -293,7 +293,7 @@ func GenerateAccessToken(c *gin.Context) {
 		})
 		return
 	}
-	user.AccessToken = random.GetUUID()
+	user.AccessToken = utils.GetUUID()
 
 	if model.DB.Where("access_token = ?", user.AccessToken).First(user).RowsAffected != 0 {
 		c.JSON(http.StatusOK, gin.H{
@@ -330,7 +330,7 @@ func GetAffCode(c *gin.Context) {
 		return
 	}
 	if user.AffCode == "" {
-		user.AffCode = random.GetRandomString(4)
+		user.AffCode = utils.GetRandomString(4)
 		if err := user.Update(false); err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -739,7 +739,7 @@ func EmailBind(c *gin.Context) {
 		return
 	}
 	if user.Role == model.RoleRootUser {
-		config.RootUserEmail = email
+		global.RootUserEmail = email
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
