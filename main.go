@@ -24,7 +24,8 @@ import (
 // 项目内部包
 
 // 主程序入口
-// 嵌入前端构建产物到二进制文件中
+
+//go:embed web/build/*
 var buildFS embed.FS
 
 // 主程序入口

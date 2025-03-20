@@ -3,7 +3,9 @@ package router
 import (
 	"embed" // 用于嵌入静态资源文件
 	"fmt"   // 格式化字符串
+	"strings"
 
+	"github.com/9688101/hx-admin/controller"
 	"github.com/9688101/hx-admin/global" // 引入配置模块
 	"github.com/9688101/hx-admin/utils"
 	"github.com/gin-contrib/gzip"   // Gin 的 gzip 中间件，用于压缩 HTTP 响应
@@ -31,15 +33,15 @@ func SetWebRouter(router *gin.Engine, buildFS embed.FS) {
 	router.Use(middleware.Cache())
 
 	// 配置静态文件服务，将前端 `web/build/{主题名}` 目录中的文件嵌入到 Gin 路由中
-	router.Use(static.Serve("/", utils.EmbedFolder(buildFS, fmt.Sprintf("web/build/%s", global.Theme))))
+	router.Use(static.Serve("/", utils.EmbedFolder(buildFS, fmt.Sprintf("web/build/%s", "default"))))
 
 	// 配置默认的 404 处理（未匹配到的路由）
 	router.NoRoute(func(c *gin.Context) {
 		// 如果请求路径以 `/v1` 或 `/api` 开头，则可能是 API 请求，返回自定义的 404 处理（目前被注释）
-		// if strings.HasPrefix(c.Request.RequestURI, "/v1") || strings.HasPrefix(c.Request.RequestURI, "/api") {
-		// 	controller.RelayNotFound(c)
-		// 	return
-		// }
+		if strings.HasPrefix(c.Request.RequestURI, "/v1") || strings.HasPrefix(c.Request.RequestURI, "/api") {
+			controller.RelayNotFound(c)
+			return
+		}
 
 		// 取消缓存，确保前端文件最新
 		c.Header("Cache-Control", "no-cache")

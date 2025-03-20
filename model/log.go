@@ -6,10 +6,11 @@ package model
 
 // 	"gorm.io/gorm"
 
-// 	"github.com/9688101/hx-admin/common"
-// 	"github.com/9688101/hx-admin/core/logger"
-// 	"github.com/9688101/hx-admin/global"
-// 	"github.com/9688101/hx-admin/utils/helper"
+//	"github.com/9688101/hx-admin/common"
+//	"github.com/9688101/hx-admin/core/logger"
+//	"github.com/9688101/hx-admin/global"
+//	"github.com/9688101/hx-admin/utils/helper"
+//
 // )
 
 type Log struct {
