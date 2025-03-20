@@ -1,18 +1,5 @@
 package middleware
 
-// import (
-// 	"fmt"
-// 	"net/http"
-// 	"strconv"
-
-// 	"github.com/gin-gonic/gin"
-
-// 	"github.com/songquanpeng/one-api/common/ctxkey"
-// 	"github.com/songquanpeng/one-api/common/logger"
-// 	"github.com/songquanpeng/one-api/model"
-// 	"github.com/songquanpeng/one-api/relay/channeltype"
-// )
-
 // type ModelRequest struct {
 // 	Model string `json:"model" form:"model"`
 // }
