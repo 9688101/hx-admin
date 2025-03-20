@@ -11,10 +11,8 @@ require (
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.6.0
-	github.com/joho/godotenv v1.5.1
 	github.com/smartystreets/goconvey v1.8.1
 	golang.org/x/crypto v0.36.0
-	golang.org/x/image v0.25.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/driver/sqlite v1.5.7
