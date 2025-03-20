@@ -6,12 +6,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/message"
 	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/global"
-	"github.com/9688101/hx-admin/model"
-
+	"github.com/9688101/hx-admin/server"
+	"github.com/9688101/hx-admin/utils"
+	"github.com/9688101/hx-admin/utils/message"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,8 +19,8 @@ func GetStatus(c *gin.Context) {
 		"success": true,
 		"message": "",
 		"data": gin.H{
-			"version":            common.Version,
-			"start_time":         common.StartTime,
+			"version":            global.Version,
+			"start_time":         global.StartTime,
 			"email_verification": global.EmailVerificationEnabled,
 			"github_oauth":       global.GitHubOAuthEnabled,
 			"github_client_id":   global.GitHubClientId,
@@ -84,7 +83,7 @@ func GetHomePageContent(c *gin.Context) {
 
 func SendEmailVerification(c *gin.Context) {
 	email := c.Query("email")
-	if err := common.Validate.Var(email, "required,email"); err != nil {
+	if err := utils.Validate.Var(email, "required,email"); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": i18n.Translate(c, "invalid_parameter"),
@@ -107,15 +106,15 @@ func SendEmailVerification(c *gin.Context) {
 			return
 		}
 	}
-	if model.IsEmailAlreadyTaken(email) {
+	if server.IsEmailAlreadyTaken(email) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "邮箱地址已被占用",
 		})
 		return
 	}
-	code := common.GenerateVerificationCode(6)
-	common.RegisterVerificationCodeWithKey(email, code, common.EmailVerificationPurpose)
+	code := utils.GenerateVerificationCode(6)
+	utils.RegisterVerificationCodeWithKey(email, code, utils.EmailVerificationPurpose)
 	subject := fmt.Sprintf("%s 邮箱验证邮件", global.SystemName)
 	content := message.EmailTemplate(
 		subject,
@@ -125,7 +124,7 @@ func SendEmailVerification(c *gin.Context) {
 			<p>您的验证码为：</p>
 			<p style="font-size: 24px; font-weight: bold; color: #333; background-color: #f8f8f8; padding: 10px; text-align: center; border-radius: 4px;">%s</p>
 			<p style="color: #666;">验证码 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, global.SystemName, code, common.VerificationValidMinutes),
+		`, global.SystemName, code, utils.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {
@@ -144,22 +143,22 @@ func SendEmailVerification(c *gin.Context) {
 
 func SendPasswordResetEmail(c *gin.Context) {
 	email := c.Query("email")
-	if err := common.Validate.Var(email, "required,email"); err != nil {
+	if err := utils.Validate.Var(email, "required,email"); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": i18n.Translate(c, "invalid_parameter"),
 		})
 		return
 	}
-	if !model.IsEmailAlreadyTaken(email) {
+	if !server.IsEmailAlreadyTaken(email) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "该邮箱地址未注册",
 		})
 		return
 	}
-	code := common.GenerateVerificationCode(0)
-	common.RegisterVerificationCodeWithKey(email, code, common.PasswordResetPurpose)
+	code := utils.GenerateVerificationCode(0)
+	utils.RegisterVerificationCodeWithKey(email, code, utils.PasswordResetPurpose)
 	link := fmt.Sprintf("%s/user/reset?email=%s&token=%s", global.ServerAddress, email, code)
 	subject := fmt.Sprintf("%s 密码重置", global.SystemName)
 	content := message.EmailTemplate(
@@ -174,7 +173,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 			<p style="color: #666;">如果按钮无法点击，请复制以下链接到浏览器中打开：</p>
 			<p style="background-color: #f8f8f8; padding: 10px; border-radius: 4px; word-break: break-all;">%s</p>
 			<p style="color: #666;">重置链接 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, global.SystemName, link, link, common.VerificationValidMinutes),
+		`, global.SystemName, link, link, utils.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {
@@ -206,15 +205,15 @@ func ResetPassword(c *gin.Context) {
 		})
 		return
 	}
-	if !common.VerifyCodeWithKey(req.Email, req.Token, common.PasswordResetPurpose) {
+	if !utils.VerifyCodeWithKey(req.Email, req.Token, utils.PasswordResetPurpose) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "重置链接非法或已过期",
 		})
 		return
 	}
-	password := common.GenerateVerificationCode(12)
-	err = model.ResetUserPasswordByEmail(req.Email, password)
+	password := utils.GenerateVerificationCode(12)
+	err = server.ResetUserPasswordByEmail(req.Email, password)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -222,7 +221,7 @@ func ResetPassword(c *gin.Context) {
 		})
 		return
 	}
-	common.DeleteKey(req.Email, common.PasswordResetPurpose)
+	utils.DeleteKey(req.Email, utils.PasswordResetPurpose)
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",

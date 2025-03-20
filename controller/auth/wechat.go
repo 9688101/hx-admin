@@ -10,10 +10,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/ctxkey"
 	"github.com/9688101/hx-admin/controller"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/server"
+	"github.com/9688101/hx-admin/utils/ctxkey"
 )
 
 type wechatLoginResponse struct {
@@ -74,8 +75,8 @@ func WeChatAuth(c *gin.Context) {
 	user := model.User{
 		WeChatId: wechatId,
 	}
-	if model.IsWeChatIdAlreadyTaken(wechatId) {
-		err := user.FillUserByWeChatId()
+	if server.IsWeChatIdAlreadyTaken(wechatId) {
+		err := server.FillUserByWeChatId(&user)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -85,12 +86,12 @@ func WeChatAuth(c *gin.Context) {
 		}
 	} else {
 		if global.RegisterEnabled {
-			user.Username = "wechat_" + strconv.Itoa(model.GetMaxUserId()+1)
+			user.Username = "wechat_" + strconv.Itoa(server.GetMaxUserId()+1)
 			user.DisplayName = "WeChat User"
-			user.Role = model.RoleCommonUser
-			user.Status = model.UserStatusEnabled
+			user.Role = server.RoleCommonUser
+			user.Status = server.UserStatusEnabled
 
-			if err := user.Insert(ctx, 0); err != nil {
+			if err := server.InsertUser(ctx, &user, 0); err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"success": false,
 					"message": err.Error(),
@@ -106,7 +107,7 @@ func WeChatAuth(c *gin.Context) {
 		}
 	}
 
-	if user.Status != model.UserStatusEnabled {
+	if user.Status != server.UserStatusEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "用户已被封禁",
 			"success": false,
@@ -133,7 +134,7 @@ func WeChatBind(c *gin.Context) {
 		})
 		return
 	}
-	if model.IsWeChatIdAlreadyTaken(wechatId) {
+	if server.IsWeChatIdAlreadyTaken(wechatId) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "该微信账号已被绑定",
@@ -144,7 +145,7 @@ func WeChatBind(c *gin.Context) {
 	user := model.User{
 		Id: id,
 	}
-	err = user.FillUserById()
+	err = server.FillUserById(&user)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -153,7 +154,7 @@ func WeChatBind(c *gin.Context) {
 		return
 	}
 	user.WeChatId = wechatId
-	err = user.Update(false)
+	err = server.UpdateUser(&user, false)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

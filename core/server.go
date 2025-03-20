@@ -14,6 +14,8 @@ import (
 	"github.com/9688101/hx-admin/initialize"
 	"github.com/9688101/hx-admin/middleware"
 	"github.com/9688101/hx-admin/router"
+	"github.com/9688101/hx-admin/server"
+	"github.com/9688101/hx-admin/source"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -24,9 +26,9 @@ var buildFS embed.FS
 
 // 主程序入口
 func RunServer() {
-	common.Init()                                        // 初始化通用配置
+	source.Init()                                        // 初始化通用配置
 	logger.SetupLogger()                                 // 初始化日志系统
-	logger.SysLogf("One API %s started", common.Version) // 记录启动日志
+	logger.SysLogf("One API %s started", global.Version) // 记录启动日志
 
 	// 设置Gin运行模式
 	if os.Getenv("GIN_MODE") != gin.DebugMode {
@@ -60,7 +62,7 @@ func RunServer() {
 	}
 
 	// 初始化系统配置选项
-	initialize.InitOptionMap()
+	server.InitOptionMap()
 	logger.SysLog(fmt.Sprintf("using theme %s", global.Theme)) // 记录主题信息
 
 	// 配置缓存设置
@@ -73,7 +75,7 @@ func RunServer() {
 	}
 
 	// 初始化API客户端
-	client.Init()
+	source.Init()
 
 	// 初始化国际化支持
 	if err := i18n.Init(); err != nil {
@@ -96,7 +98,7 @@ func RunServer() {
 	// 获取并设置服务端口
 	var port = os.Getenv("PORT")
 	if port == "" {
-		port = strconv.Itoa(*common.Port) // 使用默认端口
+		port = strconv.Itoa(*source.Port) // 使用默认端口
 	}
 	logger.SysLogf("server started on http://localhost:%s", port)
 
