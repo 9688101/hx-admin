@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-
+ "fmt"
 	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
@@ -12,6 +12,18 @@ import (
 	"github.com/9688101/hx-admin/utils/ctxkey"
 	"github.com/gin-gonic/gin"
 )
+
+func RelayNotFound(c *gin.Context) {
+        err := model.Error{
+                Message: fmt.Sprintf("Invalid URL (%s %s)", c.Request.Method, c.Request.URL.Path),
+                Type:    "invalid_request_error",
+                Param:   "",
+                Code:    "",
+        }
+        c.JSON(http.StatusNotFound, gin.H{
+                "error": err,
+        })
+}
 
 func GetSelf(c *gin.Context) {
 	id := c.GetInt(ctxkey.Id)
