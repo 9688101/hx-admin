@@ -14,8 +14,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/helper"
 	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/utils/helper"
 )
 
 var LogDir string

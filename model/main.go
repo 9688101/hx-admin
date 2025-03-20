@@ -9,10 +9,10 @@ import (
 
 	"github.com/9688101/hx-admin/common"
 	"github.com/9688101/hx-admin/common/env"
-	"github.com/9688101/hx-admin/common/helper"
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/utils"
+	"github.com/9688101/hx-admin/utils/helper"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

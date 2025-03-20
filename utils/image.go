@@ -13,7 +13,6 @@ import (
 	"sync"
 
 	"github.com/9688101/hx-admin/common/client"
-
 	_ "golang.org/x/image/webp"
 )
 

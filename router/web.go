@@ -4,11 +4,11 @@ import (
 	"embed" // 用于嵌入静态资源文件
 	"fmt"   // 格式化字符串
 
-	"github.com/9688101/hx-admin/common"        // 引入通用工具
+	"github.com/9688101/hx-admin/common" // 引入通用工具
 	"github.com/9688101/hx-admin/global" // 引入配置模块
-	"github.com/gin-contrib/gzip"              // Gin 的 gzip 中间件，用于压缩 HTTP 响应
-	"github.com/gin-contrib/static"            // Gin 的静态文件服务中间件
-	"github.com/gin-gonic/gin"                 // Gin 框架，用于处理 HTTP 请求
+	"github.com/gin-contrib/gzip"        // Gin 的 gzip 中间件，用于压缩 HTTP 响应
+	"github.com/gin-contrib/static"      // Gin 的静态文件服务中间件
+	"github.com/gin-gonic/gin"           // Gin 框架，用于处理 HTTP 请求
 
 	"net/http" // 提供 HTTP 相关功能
 

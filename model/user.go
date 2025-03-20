@@ -10,7 +10,7 @@ import (
 	"github.com/9688101/hx-admin/utils"
 
 	// "github.com/songquanpeng/one-api/common/helper"
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
 )
 
 const (

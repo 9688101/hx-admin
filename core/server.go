@@ -15,8 +15,8 @@ import (
 	// 项目内部包
 	"github.com/9688101/hx-admin/common"
 	"github.com/9688101/hx-admin/common/client"
-	"github.com/9688101/hx-admin/common/i18n"
 	"github.com/9688101/hx-admin/config"
+	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/middleware"

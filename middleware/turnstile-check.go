@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"

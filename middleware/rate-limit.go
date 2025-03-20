@@ -8,18 +8,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/config"
 	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/initialize"
+	"github.com/9688101/hx-admin/utils"
 )
 
 var timeFormat = "2006-01-02T15:04:05.000Z"
 
-var inMemoryRateLimiter common.InMemoryRateLimiter
+var inMemoryRateLimiter utils.InMemoryRateLimiter
 
 func redisRateLimiter(c *gin.Context, maxRequestNum int, duration int64, mark string) {
 	ctx := context.Background()
-	rdb := common.RDB
+	rdb := initialize.RDB
 	key := "rateLimit:" + mark + c.ClientIP()
 	listLength, err := rdb.LLen(ctx, key).Result()
 	if err != nil {
@@ -78,7 +78,7 @@ func rateLimitFactory(maxRequestNum int, duration int64, mark string) func(c *gi
 			c.Next()
 		}
 	}
-	if config.RedisEnabled {
+	if initialize.RedisEnabled {
 		return func(c *gin.Context) {
 			redisRateLimiter(c, maxRequestNum, duration, mark)
 		}

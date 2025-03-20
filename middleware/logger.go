@@ -3,7 +3,7 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/9688101/hx-admin/common/helper"
+	"github.com/9688101/hx-admin/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 

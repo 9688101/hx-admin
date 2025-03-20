@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/9688101/hx-admin/common/helper"
-	"github.com/9688101/hx-admin/common/i18n"
+	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/utils/helper"
 
 	"github.com/gin-gonic/gin"
 )

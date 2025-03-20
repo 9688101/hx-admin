@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/9688101/hx-admin/common/helper"
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
+	"github.com/9688101/hx-admin/utils/helper"
 	"github.com/gin-gonic/gin"
 )
 

@@ -12,11 +12,11 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/logger"
-	"github.com/9688101/hx-admin/utils"
 	"github.com/9688101/hx-admin/controller"
+	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/utils"
 )
 
 type GitHubOAuthResponse struct {

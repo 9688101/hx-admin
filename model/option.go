@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	// billingratio "github.com/songquanpeng/one-api/relay/billing/ratio"
 )

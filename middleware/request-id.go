@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/helper"
+	"github.com/9688101/hx-admin/utils/helper"
 )
 
 func RequestId() func(c *gin.Context) {

@@ -7,9 +7,9 @@ import (
 	"os"       // 处理系统环境变量
 	"strings"  // 处理字符串操作
 
-	"github.com/9688101/hx-admin/common/logger" // 引入日志模块
-	"github.com/9688101/hx-admin/global"        // 引入配置模块
-	"github.com/gin-gonic/gin"                  // 引入 Gin 框架，用于处理 HTTP 请求
+	"github.com/9688101/hx-admin/core/logger" // 引入日志模块
+	"github.com/9688101/hx-admin/global"      // 引入配置模块
+	"github.com/gin-gonic/gin"                // 引入 Gin 框架，用于处理 HTTP 请求
 )
 
 // SetRouter 配置整个 Web 服务器的路由

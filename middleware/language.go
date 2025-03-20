@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/9688101/hx-admin/common/i18n"
+	"github.com/9688101/hx-admin/core/i18n"
 )
 
 func Language() gin.HandlerFunc {

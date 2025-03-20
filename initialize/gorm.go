@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/9688101/hx-admin/common/env"
-	"github.com/9688101/hx-admin/common/logger"
+	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"gorm.io/gorm"
 )
