@@ -1,4 +1,4 @@
-package common
+package source
 
 import (
 	"flag"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/initialize"
 )
 
 var (
@@ -46,7 +47,7 @@ func Init() {
 		}
 	}
 	if os.Getenv("SQLITE_PATH") != "" {
-		SQLitePath = os.Getenv("SQLITE_PATH")
+		initialize.SQLitePath = os.Getenv("SQLITE_PATH")
 	}
 	if *LogDir != "" {
 		var err error

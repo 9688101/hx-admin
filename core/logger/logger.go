@@ -15,10 +15,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/9688101/hx-admin/global"
-	"github.com/9688101/hx-admin/utils/helper"
+	"github.com/9688101/hx-admin/utils"
 )
-
-var LogDir string
 
 type loggerLevel string
 
@@ -128,7 +126,7 @@ func logHelper(ctx context.Context, level loggerLevel, msg string) {
 	}
 	var requestId string
 	if ctx != nil {
-		rawRequestId := helper.GetRequestID(ctx)
+		rawRequestId := utils.GetRequestID(ctx)
 		if rawRequestId != "" {
 			requestId = fmt.Sprintf(" | %s", rawRequestId)
 		}

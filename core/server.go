@@ -2,28 +2,21 @@ package core
 
 // 导入需要的包
 import (
-	"embed"   // 用于嵌入静态文件
-	"fmt"     // 格式化输入输出
-	"os"      // 操作系统功能接口
-	"strconv" // 字符串转换
+	"embed"
+	"fmt"
+	"os"
+	"strconv"
 
-	"github.com/gin-contrib/sessions"        // Gin会话管理
-	"github.com/gin-contrib/sessions/cookie" // Cookie存储会话
-	"github.com/gin-gonic/gin"               // Gin Web框架
-	_ "github.com/joho/godotenv/autoload"    // 自动加载.env文件
-
-	// 项目内部包
-	"github.com/9688101/hx-admin/common"
-	"github.com/9688101/hx-admin/common/client"
 	"github.com/9688101/hx-admin/config"
 	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/initialize"
 	"github.com/9688101/hx-admin/middleware"
-	"github.com/9688101/hx-admin/model"
-
-	// 注释掉的OpenAI适配器
 	"github.com/9688101/hx-admin/router"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 // 嵌入前端构建产物到二进制文件中
@@ -44,17 +37,17 @@ func RunServer() {
 	}
 
 	// 初始化数据库
-	model.InitDB()    // 主数据库初始化
-	model.InitLogDB() // 日志数据库初始化
+	initialize.InitDB()    // 主数据库初始化
+	initialize.InitLogDB() // 日志数据库初始化
 
 	// 创建根账户（如果需要）
 	var err error
-	err = model.CreateRootAccountIfNeed()
+	err = initialize.CreateRootAccountIfNeed()
 	if err != nil {
 		logger.FatalLog("database init error: " + err.Error())
 	}
 	defer func() { // 确保程序退出时关闭数据库连接
-		err := model.CloseDB()
+		err := initialize.CloseDB()
 		if err != nil {
 			logger.FatalLog("failed to close database: " + err.Error())
 		}
@@ -67,7 +60,7 @@ func RunServer() {
 	}
 
 	// 初始化系统配置选项
-	model.InitOptionMap()
+	initialize.InitOptionMap()
 	logger.SysLog(fmt.Sprintf("using theme %s", global.Theme)) // 记录主题信息
 
 	// 配置缓存设置

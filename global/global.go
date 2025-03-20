@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/9688101/hx-admin/common/env" // 环境变量处理工具
-	"github.com/google/uuid"                 // UUID生成工具
+	"github.com/9688101/hx-admin/utils/env" // 环境变量处理工具
+	"github.com/google/uuid"                // UUID生成工具
 )
 
 // 系统基础配置

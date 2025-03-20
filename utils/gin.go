@@ -1,4 +1,4 @@
-package common
+package utils
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/9688101/hx-admin/common/ctxkey"
+	"github.com/9688101/hx-admin/utils/ctxkey"
 	"github.com/gin-gonic/gin"
 )
 

@@ -2,14 +2,14 @@ package middleware
 
 import (
 	"github.com/9688101/hx-admin/core/logger"
-	"github.com/9688101/hx-admin/utils/helper"
+	"github.com/9688101/hx-admin/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func abortWithMessage(c *gin.Context, statusCode int, message string) {
 	c.JSON(statusCode, gin.H{
 		"error": gin.H{
-			"message": helper.MessageWithRequestId(message, c.GetString(helper.RequestIdKey)),
+			"message": utils.MessageWithRequestId(message, c.GetString(utils.RequestIdKey)),
 			"type":    "one_api_error",
 		},
 	})

@@ -8,7 +8,8 @@ import (
 	"github.com/9688101/hx-admin/core/i18n"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
-	"github.com/9688101/hx-admin/utils/helper"
+	"github.com/9688101/hx-admin/server"
+	"github.com/9688101/hx-admin/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +23,7 @@ func GetOptions(c *gin.Context) {
 		}
 		options = append(options, &model.Option{
 			Key:   k,
-			Value: helper.Interface2String(v),
+			Value: utils.Interface2String(v),
 		})
 	}
 	global.OptionMapRWMutex.Unlock()
@@ -86,7 +87,7 @@ func UpdateOption(c *gin.Context) {
 			return
 		}
 	}
-	err = model.UpdateOption(option.Key, option.Value)
+	err = server.UpdateOption(option.Key, option.Value)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

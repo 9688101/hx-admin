@@ -1,19 +1,10 @@
 package model
 
-import "errors"
-
 // import "errors"
 
 // import (
 // 	"errors"
 // )
-
-const (
-	TokenStatusEnabled   = 1 // don't use 0, 0 is the default value!
-	TokenStatusDisabled  = 2 // also don't use 0
-	TokenStatusExpired   = 3
-	TokenStatusExhausted = 4
-)
 
 type Token struct {
 	Id           int    `json:"id"`
@@ -26,9 +17,22 @@ type Token struct {
 	ExpiredTime  int64  `json:"expired_time" gorm:"bigint;default:-1"` // -1 means never expired
 	// RemainQuota    int64   `json:"remain_quota" gorm:"bigint;default:0"`
 	// UnlimitedQuota bool    `json:"unlimited_quota" gorm:"default:false"`
-	// UsedQuota      int64   `json:"used_quota" gorm:"bigint;default:0"` // used quota
+	UsedQuota int64 `json:"used_quota" gorm:"bigint;default:0"` // used quota
 	// Models         *string `json:"models" gorm:"type:text"`            // allowed models
 	Subnet *string `json:"subnet" gorm:"default:''"` // allowed subnet
+}
+
+func NewToken() *Token {
+	return &Token{}
+}
+func NewTokenById(id int) *Token {
+	return &Token{Id: id}
+}
+func NewTokenByUserId(id int, uid int) *Token {
+	return &Token{
+		Id:     id,
+		UserId: uid,
+	}
 }
 
 // func GetAllUserTokens(userId int, startIdx int, num int, order string) ([]*Token, error) {
@@ -97,73 +101,6 @@ type Token struct {
 // 	}
 // 	return token, nil
 // }
-
-func GetTokenByIds(id int, userId int) (*Token, error) {
-	if id == 0 || userId == 0 {
-		return nil, errors.New("id 或 userId 为空！")
-	}
-	token := Token{Id: id, UserId: userId}
-	var err error = nil
-	err = DB.First(&token, "id = ? and user_id = ?", id, userId).Error
-	return &token, err
-}
-
-func GetTokenById(id int) (*Token, error) {
-	if id == 0 {
-		return nil, errors.New("id 为空！")
-	}
-	token := Token{Id: id}
-	var err error = nil
-	err = DB.First(&token, "id = ?", id).Error
-	return &token, err
-}
-
-func (t *Token) Insert() error {
-	var err error
-	err = DB.Create(t).Error
-	return err
-}
-
-// Update Make sure your token's fields is completed, because this will update non-zero values
-func (t *Token) Update() error {
-	var err error
-	err = DB.Model(t).Select("name", "status", "expired_time", "remain_quota", "unlimited_quota", "models", "subnet").Updates(t).Error
-	return err
-}
-
-func (t *Token) SelectUpdate() error {
-	// This can update zero values
-	return DB.Model(t).Select("accessed_time", "status").Updates(t).Error
-}
-
-func (t *Token) Delete() error {
-	var err error
-	err = DB.Delete(t).Error
-	return err
-}
-
-// func (t *Token) GetModels() string {
-// 	if t == nil {
-// 		return ""
-// 	}
-// 	if t.Models == nil {
-// 		return ""
-// 	}
-// 	return *t.Models
-// }
-
-func DeleteTokenById(id int, userId int) (err error) {
-	// Why we need userId here? In case user want to delete other's token.
-	if id == 0 || userId == 0 {
-		return errors.New("id 或 userId 为空！")
-	}
-	token := Token{Id: id, UserId: userId}
-	err = DB.Where(token).First(&token).Error
-	if err != nil {
-		return err
-	}
-	return token.Delete()
-}
 
 // func IncreaseTokenQuota(id int, quota int64) (err error) {
 // 	if quota < 0 {

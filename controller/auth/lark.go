@@ -16,6 +16,7 @@ import (
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/server"
 )
 
 type LarkOAuthResponse struct {
@@ -108,8 +109,8 @@ func LarkOAuth(c *gin.Context) {
 	user := model.User{
 		LarkId: larkUser.OpenID,
 	}
-	if model.IsLarkIdAlreadyTaken(user.LarkId) {
-		err := user.FillUserByLarkId()
+	if server.IsLarkIdAlreadyTaken(user.LarkId) {
+		err := server.FillUserByLarkId(&user)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -119,16 +120,16 @@ func LarkOAuth(c *gin.Context) {
 		}
 	} else {
 		if global.RegisterEnabled {
-			user.Username = "lark_" + strconv.Itoa(model.GetMaxUserId()+1)
+			user.Username = "lark_" + strconv.Itoa(server.GetMaxUserId()+1)
 			if larkUser.Name != "" {
 				user.DisplayName = larkUser.Name
 			} else {
 				user.DisplayName = "Lark User"
 			}
-			user.Role = model.RoleCommonUser
-			user.Status = model.UserStatusEnabled
+			user.Role = server.RoleCommonUser
+			user.Status = server.UserStatusEnabled
 
-			if err := user.Insert(ctx, 0); err != nil {
+			if err := server.InsertUser(ctx, &user, 0); err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"success": false,
 					"message": err.Error(),
@@ -144,7 +145,7 @@ func LarkOAuth(c *gin.Context) {
 		}
 	}
 
-	if user.Status != model.UserStatusEnabled {
+	if user.Status != server.UserStatusEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "用户已被封禁",
 			"success": false,
@@ -167,7 +168,7 @@ func LarkBind(c *gin.Context) {
 	user := model.User{
 		LarkId: larkUser.OpenID,
 	}
-	if model.IsLarkIdAlreadyTaken(user.LarkId) {
+	if server.IsLarkIdAlreadyTaken(user.LarkId) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "该飞书账户已被绑定",
@@ -178,7 +179,7 @@ func LarkBind(c *gin.Context) {
 	id := session.Get("id")
 	// id := c.GetInt("id")  // critical bug!
 	user.Id = id.(int)
-	err = user.FillUserById()
+	err = server.FillUserById(&user)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -187,7 +188,7 @@ func LarkBind(c *gin.Context) {
 		return
 	}
 	user.LarkId = larkUser.OpenID
-	err = user.Update(false)
+	err = server.UpdateUser(&user, false)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

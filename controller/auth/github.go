@@ -16,6 +16,7 @@ import (
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/server"
 	"github.com/9688101/hx-admin/utils"
 )
 
@@ -25,13 +26,7 @@ type GitHubOAuthResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-type GitHubUser struct {
-	Login string `json:"login"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
-func getGitHubUserInfoByCode(code string) (*GitHubUser, error) {
+func getGitHubUserInfoByCode(code string) (*model.GitHubUser, error) {
 	if code == "" {
 		return nil, errors.New("无效的参数")
 	}
@@ -71,15 +66,15 @@ func getGitHubUserInfoByCode(code string) (*GitHubUser, error) {
 		return nil, errors.New("无法连接至 GitHub 服务器，请稍后重试！")
 	}
 	defer res2.Body.Close()
-	var githubUser GitHubUser
-	err = json.NewDecoder(res2.Body).Decode(&githubUser)
+	gu := model.NewGitHubUser()
+	err = json.NewDecoder(res2.Body).Decode(gu)
 	if err != nil {
 		return nil, err
 	}
-	if githubUser.Login == "" {
+	if gu.Login == "" {
 		return nil, errors.New("返回值非法，用户字段为空，请稍后重试！")
 	}
-	return &githubUser, nil
+	return gu, nil
 }
 
 func GitHubOAuth(c *gin.Context) {
@@ -115,11 +110,9 @@ func GitHubOAuth(c *gin.Context) {
 		})
 		return
 	}
-	user := model.User{
-		GitHubId: githubUser.Login,
-	}
-	if model.IsGitHubIdAlreadyTaken(user.GitHubId) {
-		err := user.FillUserByGitHubId()
+	u := model.NewUserByGitHubId(githubUser.Login)
+	if server.IsGitHubIdAlreadyTaken(u.GitHubId) {
+		err := server.FillUserByGitHubId(u)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -129,17 +122,17 @@ func GitHubOAuth(c *gin.Context) {
 		}
 	} else {
 		if global.RegisterEnabled {
-			user.Username = "github_" + strconv.Itoa(model.GetMaxUserId()+1)
+			u.Username = "github_" + strconv.Itoa(server.GetMaxUserId()+1)
 			if githubUser.Name != "" {
-				user.DisplayName = githubUser.Name
+				u.DisplayName = githubUser.Name
 			} else {
-				user.DisplayName = "GitHub User"
+				u.DisplayName = "GitHub User"
 			}
-			user.Email = githubUser.Email
-			user.Role = model.RoleCommonUser
-			user.Status = model.UserStatusEnabled
+			u.Email = githubUser.Email
+			u.Role = server.RoleCommonUser
+			u.Status = server.UserStatusEnabled
 
-			if err := user.Insert(ctx, 0); err != nil {
+			if err := server.InsertUser(ctx, u, 0); err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"success": false,
 					"message": err.Error(),
@@ -155,14 +148,14 @@ func GitHubOAuth(c *gin.Context) {
 		}
 	}
 
-	if user.Status != model.UserStatusEnabled {
+	if u.Status != server.UserStatusEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "用户已被封禁",
 			"success": false,
 		})
 		return
 	}
-	controller.SetupLogin(&user, c)
+	controller.SetupLogin(u, c)
 }
 
 func GitHubBind(c *gin.Context) {
@@ -182,10 +175,8 @@ func GitHubBind(c *gin.Context) {
 		})
 		return
 	}
-	user := model.User{
-		GitHubId: githubUser.Login,
-	}
-	if model.IsGitHubIdAlreadyTaken(user.GitHubId) {
+	u := model.NewUserByGitHubId(githubUser.Login)
+	if server.IsGitHubIdAlreadyTaken(u.GitHubId) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "该 GitHub 账户已被绑定",
@@ -195,8 +186,8 @@ func GitHubBind(c *gin.Context) {
 	session := sessions.Default(c)
 	id := session.Get("id")
 	// id := c.GetInt("id")  // critical bug!
-	user.Id = id.(int)
-	err = user.FillUserById()
+	u.Id = id.(int)
+	err = server.FillUserById(u)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -204,8 +195,8 @@ func GitHubBind(c *gin.Context) {
 		})
 		return
 	}
-	user.GitHubId = githubUser.Login
-	err = user.Update(false)
+	u.GitHubId = githubUser.Login
+	err = server.UpdateUser(u, false)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,

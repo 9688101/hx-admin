@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/9688101/hx-admin/common"
 	"github.com/9688101/hx-admin/core/logger"
+	"github.com/9688101/hx-admin/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,7 @@ func RelayPanicRecover() gin.HandlerFunc {
 				logger.Errorf(ctx, fmt.Sprintf("panic detected: %v", err))
 				logger.Errorf(ctx, fmt.Sprintf("stacktrace from panic: %s", string(debug.Stack())))
 				logger.Errorf(ctx, fmt.Sprintf("request: %s %s", c.Request.Method, c.Request.URL.Path))
-				body, _ := common.GetRequestBody(c)
+				body, _ := utils.GetRequestBody(c)
 				logger.Errorf(ctx, fmt.Sprintf("request body: %s", string(body)))
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error": gin.H{

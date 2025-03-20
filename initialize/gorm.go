@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/9688101/hx-admin/common/env"
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
+	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/utils/env"
 	"gorm.io/gorm"
 )
 
@@ -31,60 +32,60 @@ func chooseDB(envName string) (*gorm.DB, error) {
 	}
 }
 
-// func InitDB() {
-// 	var err error
-// 	DB, err = chooseDB("SQL_DSN")
-// 	if err != nil {
-// 		logger.FatalLog("failed to initialize database: " + err.Error())
-// 		return
-// 	}
+func InitDB() {
+	var err error
+	DB, err = chooseDB("SQL_DSN")
+	if err != nil {
+		logger.FatalLog("failed to initialize database: " + err.Error())
+		return
+	}
 
-// 	sqlDB := setDBConns(DB)
+	sqlDB := setDBConns(DB)
 
-// 	if !global.IsMasterNode {
-// 		return
-// 	}
+	if !global.IsMasterNode {
+		return
+	}
 
-// 	if common.UsingMySQL {
-// 		_, _ = sqlDB.Exec("DROP INDEX idx_channels_key ON channels;") // TODO: delete this line when most users have upgraded
-// 	}
+	if UsingMySQL {
+		_, _ = sqlDB.Exec("DROP INDEX idx_channels_key ON channels;") // TODO: delete this line when most users have upgraded
+	}
 
-// 	logger.SysLog("database migration started")
-// 	if err = migrateDB(); err != nil {
-// 		logger.FatalLog("failed to migrate database: " + err.Error())
-// 		return
-// 	}
-// 	logger.SysLog("database migrated")
-// }
+	logger.SysLog("database migration started")
+	if err = migrateDB(); err != nil {
+		logger.FatalLog("failed to migrate database: " + err.Error())
+		return
+	}
+	logger.SysLog("database migrated")
+}
 
-// func migrateDB() error {
-// 	var err error
-// 	// if err = DB.AutoMigrate(&Channel{}); err != nil {
-// 	// 	return err
-// 	// }
-// 	if err = DB.AutoMigrate(&Token{}); err != nil {
-// 		return err
-// 	}
-// 	if err = DB.AutoMigrate(&User{}); err != nil {
-// 		return err
-// 	}
-// 	if err = DB.AutoMigrate(&Option{}); err != nil {
-// 		return err
-// 	}
-// 	// if err = DB.AutoMigrate(&Redemption{}); err != nil {
-// 	// 	return err
-// 	// }
-// 	// if err = DB.AutoMigrate(&Ability{}); err != nil {
-// 	// 	return err
-// 	// }
-// 	// if err = DB.AutoMigrate(&Log{}); err != nil {
-// 	// 	return err
-// 	// }
-// 	// if err = DB.AutoMigrate(&Channel{}); err != nil {
-// 	// 	return err
-// 	// }
-// 	return nil
-// }
+func migrateDB() error {
+	var err error
+	// if err = DB.AutoMigrate(&Channel{}); err != nil {
+	// 	return err
+	// }
+	if err = DB.AutoMigrate(&model.Token{}); err != nil {
+		return err
+	}
+	if err = DB.AutoMigrate(&model.User{}); err != nil {
+		return err
+	}
+	if err = DB.AutoMigrate(&model.Option{}); err != nil {
+		return err
+	}
+	// if err = DB.AutoMigrate(&Redemption{}); err != nil {
+	// 	return err
+	// }
+	// if err = DB.AutoMigrate(&Ability{}); err != nil {
+	// 	return err
+	// }
+	// if err = DB.AutoMigrate(&Log{}); err != nil {
+	// 	return err
+	// }
+	// if err = DB.AutoMigrate(&Channel{}); err != nil {
+	// 	return err
+	// }
+	return nil
+}
 
 func InitLogDB() {
 	if os.Getenv("LOG_SQL_DSN") == "" {
@@ -107,21 +108,21 @@ func InitLogDB() {
 	}
 
 	logger.SysLog("secondary database migration started")
-	// err = migrateLOGDB()
-	// if err != nil {
-	// 	logger.FatalLog("failed to migrate secondary database: " + err.Error())
-	// 	return
-	// }
+	err = migrateLOGDB()
+	if err != nil {
+		logger.FatalLog("failed to migrate secondary database: " + err.Error())
+		return
+	}
 	logger.SysLog("secondary database migrated")
 }
 
-// func migrateLOGDB() error {
-// 	var err error
-// 	if err = LOG_DB.AutoMigrate(&Log{}); err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+func migrateLOGDB() error {
+	var err error
+	if err = LOG_DB.AutoMigrate(&model.Log{}); err != nil {
+		return err
+	}
+	return nil
+}
 
 func setDBConns(db *gorm.DB) *sql.DB {
 	if global.DebugSQLEnabled {

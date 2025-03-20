@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/server"
 	"github.com/9688101/hx-admin/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func authHelper(c *gin.Context, minRole int) {
 			c.Abort()
 			return
 		}
-		user := model.ValidateAccessToken(accessToken)
+		user := server.ValidateAccessToken(accessToken)
 		if user != nil && user.Username != "" {
 			// Token is valid
 			username = user.Username
@@ -43,7 +43,7 @@ func authHelper(c *gin.Context, minRole int) {
 			return
 		}
 	}
-	if status.(int) == model.UserStatusDisabled || utils.IsUserBanned(id.(int)) {
+	if status.(int) == server.UserStatusDisabled || utils.IsUserBanned(id.(int)) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "用户已被封禁",
@@ -70,19 +70,19 @@ func authHelper(c *gin.Context, minRole int) {
 
 func UserAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		authHelper(c, model.RoleCommonUser)
+		authHelper(c, server.RoleCommonUser)
 	}
 }
 
 func AdminAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		authHelper(c, model.RoleAdminUser)
+		authHelper(c, server.RoleAdminUser)
 	}
 }
 
 func RootAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		authHelper(c, model.RoleRootUser)
+		authHelper(c, server.RoleRootUser)
 	}
 }
 

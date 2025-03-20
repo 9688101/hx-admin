@@ -1,18 +1,17 @@
-package render
+package utils
 
 import (
 	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/9688101/hx-admin/common"
 	"github.com/gin-gonic/gin"
 )
 
 func StringData(c *gin.Context, str string) {
 	str = strings.TrimPrefix(str, "data: ")
 	str = strings.TrimSuffix(str, "\r")
-	c.Render(-1, common.CustomEvent{Data: "data: " + str})
+	c.Render(-1, CustomEvent{Data: "data: " + str})
 	c.Writer.Flush()
 }
 

@@ -16,6 +16,7 @@ import (
 	"github.com/9688101/hx-admin/core/logger"
 	"github.com/9688101/hx-admin/global"
 	"github.com/9688101/hx-admin/model"
+	"github.com/9688101/hx-admin/server"
 )
 
 type OidcResponse struct {
@@ -123,8 +124,8 @@ func OidcAuth(c *gin.Context) {
 	user := model.User{
 		OidcId: oidcUser.OpenID,
 	}
-	if model.IsOidcIdAlreadyTaken(user.OidcId) {
-		err := user.FillUserByOidcId()
+	if server.IsOidcIdAlreadyTaken(user.OidcId) {
+		err := server.FillUserByOidcId(&user)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
@@ -138,14 +139,14 @@ func OidcAuth(c *gin.Context) {
 			if oidcUser.PreferredUsername != "" {
 				user.Username = oidcUser.PreferredUsername
 			} else {
-				user.Username = "oidc_" + strconv.Itoa(model.GetMaxUserId()+1)
+				user.Username = "oidc_" + strconv.Itoa(server.GetMaxUserId()+1)
 			}
 			if oidcUser.Name != "" {
 				user.DisplayName = oidcUser.Name
 			} else {
 				user.DisplayName = "OIDC User"
 			}
-			err := user.Insert(ctx, 0)
+			err := server.InsertUser(ctx, &user, 0)
 			if err != nil {
 				c.JSON(http.StatusOK, gin.H{
 					"success": false,
@@ -162,7 +163,7 @@ func OidcAuth(c *gin.Context) {
 		}
 	}
 
-	if user.Status != model.UserStatusEnabled {
+	if user.Status != server.UserStatusEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "用户已被封禁",
 			"success": false,
@@ -192,7 +193,7 @@ func OidcBind(c *gin.Context) {
 	user := model.User{
 		OidcId: oidcUser.OpenID,
 	}
-	if model.IsOidcIdAlreadyTaken(user.OidcId) {
+	if server.IsOidcIdAlreadyTaken(user.OidcId) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "该 OIDC 账户已被绑定",
@@ -203,7 +204,7 @@ func OidcBind(c *gin.Context) {
 	id := session.Get("id")
 	// id := c.GetInt("id")  // critical bug!
 	user.Id = id.(int)
-	err = user.FillUserById()
+	err = server.FillUserById(&user)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -212,7 +213,7 @@ func OidcBind(c *gin.Context) {
 		return
 	}
 	user.OidcId = oidcUser.OpenID
-	err = user.Update(false)
+	err = server.UpdateUser(&user, false)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
