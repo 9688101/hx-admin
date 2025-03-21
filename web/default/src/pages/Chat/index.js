@@ -1,15 +1,7 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import 'semantic-ui-css/semantic.min.css';
 
-const Chat = () => {
-  const chatLink = localStorage.getItem('chat_link');
-
-  return (
-    <iframe
-      src={chatLink}
-      style={{ width: '100%', height: '85vh', border: 'none' }}
-    />
-  );
-};
-
-
+ReactDOM.render(<App />, document.getElementById('root'));
 export default Chat;
